@@ -34,7 +34,7 @@ void motor_l_tien(int speed){
   // analogWrite(MOTOR_L_2, constrain(speed, 0, 255));  
   digitalWrite(MOTOR_L_1, HIGH);
   digitalWrite(MOTOR_L_2, LOW);
-  Serial.print("L tien")
+  Serial.print("L tien");
 }
 void motor_l_lui(int speed){
   // analogWrite(MOTOR_L_1, 255);

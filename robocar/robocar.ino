@@ -7,7 +7,7 @@
 
 const uint8_t SENSORS_PIN[] = { 18, 5, 17, 16, 4, 2, 15 };
 
-float Kp = 5;
+float Kp = 8;
 float Ki = 0.0001;
 float Kd = 12;
 int P;

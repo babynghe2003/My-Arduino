@@ -1,25 +1,27 @@
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(A0, A1); // RX, TX
 #define MOTOR_L_1 7
 #define MOTOR_L_2 6
 #define MOTOR_R_1 4
 #define MOTOR_R_2 5
 
+#define arm1_servo A0
+#define arm2_servo A1
+#define grip_servo A2
+#define flag_servo 3
+
+
+SoftwareSerial mySerial(A4,A5); // RX, TX
+
 Servo arm1;
 Servo arm2;
 Servo grip;
-#define arm1_servo 9
-#define arm2_servo 11
-#define grip_servo 10
-
+Servo flag;
 
 float arm1_angle = 90;
 float arm2_angle = 90;
 float grip_angle = 90;
-
-float roll_speed = 0.01;
 
 
 bool isArm1In = false;
@@ -133,76 +135,62 @@ void loop() {
 
 // ###################################################### CONTROL MOTOR CAR ==============================================
 void stop() {
-  motor_l_tien(0);
-  motor_r_tien(0);
+  setmotor(0, 0);
 }
 
 void forward() {
-  motor_l_tien(maxspeed);
-  motor_r_tien(maxspeed);
+  setmotor(maxspeed, maxspeed);
 }
 
 void forwardLeft() {
-  motor_l_tien(0);
-  motor_r_tien(maxspeed);
+  setmotor(0, maxspeed);
 }
 
 void forwardRight() {
-  motor_l_tien(maxspeed);
-  motor_r_tien(0);
+  setmotor(maxspeed, 0);
 }
 
 void backward() {
-  motor_r_lui(maxspeed*3/4);
-  motor_l_lui(maxspeed*3/4);
+  setmotor(-maxspeed, -maxspeed);
 }
 
 void backwardLeft() {
-  motor_l_lui(maxspeed);
-  motor_r_tien(0);
+  setmotor(0, -maxspeed);
 }
 
 void backwardRight() {
-  motor_l_tien(0);
-  motor_r_lui(maxspeed);
+  setmotor(-maxspeed, 0);
 }
 
 void left() {
-  motor_l_lui(maxspeed*3/4);
-  motor_r_tien(maxspeed*3/4);
+  setmotor(-maxspeed, maxspeed);
 }
 void right() {
-  motor_r_lui(maxspeed*3/4);
-  motor_l_tien(maxspeed*3/4);
+  setmotor(maxspeed, -maxspeed);
 }
 
-void motor_l_tien(int speed){
-  digitalWrite(MOTOR_L_1, LOW);
-  analogWrite(MOTOR_L_2, constrain(speed, 0, 255));  
-}
-void motor_l_lui(int speed){
-  digitalWrite(MOTOR_L_1, HIGH);
-  analogWrite(MOTOR_L_2, constrain(255 - speed, 0, 255));
-  Serial.print("HIGH");
-}
-void motor_r_tien(int speed){
-  digitalWrite(MOTOR_R_1, LOW);
-  analogWrite(MOTOR_R_2, constrain(speed, 0, 255));  
-}
-void motor_r_lui(int speed){
-  digitalWrite(MOTOR_R_1, HIGH);
-  analogWrite(MOTOR_R_2, constrain(255-speed, 0, 255));
-  Serial.print("HIGH");
+void set_motor(int speedA, int speedB) {
+  if (speedA > 0){
+    speedA = constrain(speedA, minspeeda, maxspeeda);
+    digitalWrite(MOTOR_R_2, LOW);
+    analogWrite(MOTOR_R_1, speedA);
+  } else{
+    speedA = constrain(speedA, -maxspeeda, -minspeeda);
+    digitalWrite(MOTOR_R_2, HIGH);
+    analogWrite(MOTOR_R_1,255 + speedA);
+  }
+
+  if (speedB > 0){
+    speedB = constrain(speedB, minspeedb, maxspeedb);
+    digitalWrite(MOTOR_L_1, LOW);
+    analogWrite(MOTOR_L_2, speedB);
+  } else{
+    speedB = constrain(speedB, -maxspeedb, -minspeedb);
+    digitalWrite(MOTOR_L_1, HIGH);
+    analogWrite(MOTOR_L_2, 255 + speedB);
+  }
 }
 
-// <=============================================CONTROL ARM======================================================================
-
-void stop_arm() {
-  isArm1In = false;
-  isArm1De = false;
-  isArm2In = false;
-  isArm2De = false;
-}
 
 void servo_control() {
   if (isArm1In && arm1_angle + roll_speed < 180) {

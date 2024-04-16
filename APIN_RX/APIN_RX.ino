@@ -2,6 +2,7 @@
 #include<RF24.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 
 RF24 radio(4,5);
 
@@ -12,9 +13,9 @@ struct sensorData {
 
 sensorData data;
 
-const char* ssid = "VKU_eSTI-02";
-const char* password = "VKU_eSTI";
-const char* mqtt_server = "192.168.40.6";
+const char* ssid = "Minh_A12A10";
+const char* password = "0352353641";
+const char* mqtt_server = "192.168.1.6";
 WiFiClient espClient;
 PubSubClient client(espClient);
 unsigned long lastMsg = 0;
@@ -112,7 +113,9 @@ void loop(){
   client.loop();
   if (radio.available()){
     radio.read(&data, sizeof(sensorData));
-    client.publish("esp32/data", data);
     Serial.println(data.distance);
+    // snprintf (msg, MSG_BUFFER_SIZE, "distance #%ld", data.distance);
+    // client.publish("esp32/data", msg);
+    delay(200);
   }
 }

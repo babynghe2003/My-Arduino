@@ -64,6 +64,8 @@ void setup() {
   digitalWrite(MOTOR_R_1, HIGH);
   digitalWrite(MOTOR_R_2, LOW);
 
+  // freq = 30000
+  // resolution = 8, value in 0 - 255
   ledcSetup(ENAChanel, freq, resolution);
   ledcSetup(ENBChanel, freq, resolution);
   ledcAttachPin(MOTOR_L_2, ENAChanel);
