@@ -2,10 +2,10 @@
 // #include <SoftwareSerial.h>
 
 // SoftwareSerial mySerial(7, 8); // RX, TX
-#define MOTOR_L_1 0
-#define MOTOR_L_2 2
-#define MOTOR_R_1 14
-#define MOTOR_R_2 12
+#define MOTOR_L_1 3
+#define MOTOR_L_2 4
+#define MOTOR_R_1 6
+#define MOTOR_R_2 7
 
 
 void setup() {

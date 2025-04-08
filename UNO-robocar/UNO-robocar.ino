@@ -1,12 +1,11 @@
-#define MOTOR_L_1 7
-#define MOTOR_L_2 6
-#define MOTOR_R_1 5
-#define MOTOR_R_2 4
-
+#define MOTOR_L_1 4
+#define MOTOR_L_2 5
+#define MOTOR_R_1 6
+#define MOTOR_R_2 7
 
 const uint8_t SENSORS_PIN[] = { A0, A1, A2, A3, A4 };
 
-float Kp = 20;
+float Kp = 13;
 float Ki = 0.0002;
 float Kd = 12;
 int P;
@@ -18,8 +17,8 @@ int lastError = 0;
 int isRunning = 1;
 bool isNoLine = false;
 
-const uint8_t maxspeeda = 220;
-const uint8_t maxspeedb = 220;
+const uint8_t maxspeeda = 180;
+const uint8_t maxspeedb = 180;
 const uint8_t minspeeda = 10;
 const uint8_t minspeedb = 10;
 
@@ -110,6 +109,7 @@ void read_sensors() {
    else if (sensorArray == "11111" || sensorArray == "10101" ) {
     isRunning = 0;
   }
+  // error = -error;
 }
 
 void caculate_pid() {

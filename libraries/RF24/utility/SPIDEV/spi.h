@@ -10,12 +10,14 @@
 #ifndef RF24_UTILITY_SPIDEV_SPI_H_
 #define RF24_UTILITY_SPIDEV_SPI_H_
 
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdexcept>
 
-#include "../../RF24_config.h" // This is cyclical and should be fixed
+#ifndef RF24_SPI_SPEED
+    #define RF24_SPI_SPEED 10000000
+#endif
 
-/** Specific excpetion for SPI errors */
+/** Specific exception for SPI errors */
 class SPIException : public std::runtime_error
 {
 public:
@@ -35,7 +37,7 @@ public:
 
     uint8_t transfer(uint8_t tx);
 
-    void transfernb(char* tbuf, char* rbuf, uint32_t len);
+    void transfernb(char* txBuf, char* rxBuf, uint32_t len);
 
     void transfern(char* buf, uint32_t len);
 

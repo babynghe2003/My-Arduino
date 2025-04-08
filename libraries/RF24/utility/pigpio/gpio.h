@@ -2,14 +2,12 @@
  *
  */
 
-#ifndef RF24_GPIO_H
-#define RF24_GPIO_H
+#ifndef RF24_UTILITY_PIGPIO_GPIO_H_
+#define RF24_UTILITY_PIGPIO_GPIO_H_
 
-#include <cstdio>
-#include <map>
 #include <stdexcept>
 
-/** Specific excpetion for SPI errors */
+/** Specific exception for GPIO errors */
 class GPIOException : public std::runtime_error
 {
 public:
@@ -18,21 +16,6 @@ public:
     {
     }
 };
-
-/**
- * @file gpio.h
- * @cond HIDDEN_SYMBOLS
- * Class declaration for GPIO helper files
- */
-
-/**
- * Example GPIO.h file
- *
- * @defgroup GPIO GPIO Example
- *
- * See RF24_arch_config.h for additional information
- * @{
- */
 
 class GPIO
 {
@@ -66,18 +49,15 @@ public:
     static int read(int port);
 
     /**
-    * Similar to Arduino digitalWrite(pin,state);
-    * @param port
-    * @param value
-    */
+     * Similar to Arduino digitalWrite(pin,state);
+     * @param port
+     * @param value
+     */
     static void write(int port, int value);
 
     virtual ~GPIO();
 
 private:
 };
-/**
- * @endcond
- */
-/**@}*/
-#endif /* H */
+
+#endif /* RF24_UTILITY_PIGPIO_GPIO_H_ */

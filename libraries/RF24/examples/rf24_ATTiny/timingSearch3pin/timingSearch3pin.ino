@@ -10,7 +10,7 @@
  * macros, defined as RF24_CSN_SETTLE_HIGH_DELAY and RF24_CSN_SETTLE_LOW_DELAY,
  * in RF24::csn().
  * The settle time values used here are 100/20. However, these values depend
- * on the actual used RC combiniation and voltage drop by LED. The
+ * on the actual used RC combination and voltage drop by LED. The
  * intermediate results are written to TX (PB3, pin 2 -- using Serial).
  *
  * For schematic details, see introductory comment block in the
@@ -79,7 +79,7 @@ void csn(bool mode) {
 /****************************************************************************/
 uint8_t read_register(uint8_t reg) {
   csn(LOW);
-  SPI.transfer(R_REGISTER | reg);
+  SPI.transfer(reg);
   uint8_t result = SPI.transfer(0xff);
   csn(HIGH);
   return result;

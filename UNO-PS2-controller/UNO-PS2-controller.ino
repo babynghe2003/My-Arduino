@@ -6,6 +6,7 @@
 #define PS2_CMD 11  //MOSI  23
 #define PS2_SEL 12  //SS     5
 #define PS2_CLK 13  //SLK   18
+
 #define MOTOR_L_1 7
 #define MOTOR_L_2 6
 #define MOTOR_R_1 5
@@ -15,23 +16,18 @@
 #define arm2_servo A3
 #define grip_servo A1
 #define center_servo A4
-#define flag_servo A0
 
-#define pressures true
+#define pressures false
 #define rumble false
 
-PS2X ps2x; // create PS2 Controller Class
+PS2X ps2x;  // create PS2 Controller Class
 
 Servo centerServo;
 Servo gripServo;
 Servo armServo1;
 Servo armServo2;
-Servo flag;
 
-//right now, the library does NOT support hot pluggable controllers, meaning 
-//you must always either restart your Arduino after you conect the controller, 
-//or call config_gamepad(pins) again after connecting the controller.
-int error = -1; 
+int error = -1;
 byte type = 0;
 byte vibrate = 0;
 int tryNum = 1;
@@ -49,49 +45,42 @@ float ungrip_angle = 160;
 float center_angle = 90;
 float center_d = 3;
 
-bool is_flag = false;
-float flag_angle = 180;
-float unflag_angle = 90;
-
-
-bool isArm1In = false, isArm2In = false, isArm1De = false, isArm2De = false, isCenterIn = false, isCenterDe = false;
+bool isArm1In = false, isArm2In = false, isArm1De = false, isArm2De = false, isCenterIn = false, isCenterDe = false, isFlagIn = false, isFlagDe = false;
 
 bool isForWard = false, isBackWard = false, isLeft = false, isRight = false, isHalfRight = false, isHalfLeft = false;
 float maxSpeedMotor = 255;
 
 
+void setup() {
+  Serial.begin(115200);
 
-void setup(){
- Serial.begin(115200);
-
- //CHANGES for v1.6 HERE!!! **************PAY ATTENTION*************
-  while (error != 0){
+  //CHANGES for v1.6 HERE!!! **************PAY ATTENTION*************
+  while (error != 0) {
     delay(1000);
-    error = ps2x.config_gamepad(13,11,12,10, false, false);   //setup pins and settings:  GamePad(clock, command, attention, data, Pressures?, Rumble?) check for error
+    error = ps2x.config_gamepad(13, 11, 12, 10, false, false);  //setup pins and settings:  GamePad(clock, command, attention, data, Pressures?, Rumble?) check for error
     Serial.print("#try config ");
     Serial.println(tryNum);
     tryNum++;
   }
   Serial.println(ps2x.Analog(1), HEX);
-   
-   type = ps2x.readType(); 
-     switch(type) {
-       case 0:
-        Serial.println("Unknown Controller type");
-       break;
-       case 1:
-        Serial.println("DualShock Controller Found");
-       break;
-       case 2:
-         Serial.println("GuitarHero Controller Found");
-       break;
-     }
+
+  type = ps2x.readType();
+  switch (type) {
+    case 0:
+      Serial.println("Unknown Controller type");
+      break;
+    case 1:
+      Serial.println("DualShock Controller Found");
+      break;
+    case 2:
+      Serial.println("GuitarHero Controller Found");
+      break;
+  }
 
   armServo1.attach(arm1_servo);
   armServo2.attach(arm2_servo);
   gripServo.attach(grip_servo);
   centerServo.attach(center_servo);
-  flag.attach(flag_servo);
 
 
   pinMode(MOTOR_L_1, OUTPUT);
@@ -103,43 +92,34 @@ void setup(){
   armServo2.write(90);
   gripServo.write(ungrip_angle);
   centerServo.write(center_angle);
-  flag.write(unflag_angle);
-  
 }
 
-void loop(){ 
-  if(error == 1) //skip loop if no controller found
-    return; 
+void loop() {
+  if (error == 1)  //skip loop if no controller found
+    return;
   ps2x.read_gamepad(false, vibrate);
   read_gamepad();
 
   arm_control();
 
   delay(50);
-     
 }
 
-void read_gamepad(){
-         //read controller and set large motor to spin at 'vibrate' speed
-          
-  if(ps2x.ButtonPressed(PSB_PAD_UP)) {         //will be TRUE as long as button is pressed
-    Serial.print("Up held this hard: ");
+void read_gamepad() {
+  if (ps2x.ButtonPressed(PSB_PAD_UP)) {  //will be TRUE as long as button is pressed
     isForWard = true;
   }
-  if(ps2x.ButtonReleased(PSB_PAD_UP)) {         //will be TRUE as long as button is pressed
-    Serial.print("Up held this hard: ");
+  if (ps2x.ButtonReleased(PSB_PAD_UP)) {  //will be TRUE as long as button is pressed
     isForWard = false;
-    set_motor(0,0);
+    set_motor(0, 0);
   }
-  if(ps2x.ButtonPressed(PSB_PAD_DOWN)){
-    Serial.print("DOWN held this hard: ");
+  if (ps2x.ButtonPressed(PSB_PAD_DOWN)) {
     isBackWard = true;
-  }   
-  if(ps2x.ButtonReleased(PSB_PAD_DOWN)){
-    Serial.print("DOWN held this hard: ");
+  }
+  if (ps2x.ButtonReleased(PSB_PAD_DOWN)) {
     isBackWard = false;
-    set_motor(0,0);
-  }   
+    set_motor(0, 0);
+  }
 
   if (ps2x.Button(PSB_CIRCLE)) {
     isRight = true;
@@ -157,50 +137,52 @@ void read_gamepad(){
   if (ps2x.ButtonReleased(PSB_SQUARE)) {
     isLeft = false;
   }
+
+  // speed control
+  if (ps2x.ButtonPressed(PSB_PAD_RIGHT))  //will be TRUE if button was JUST pressed OR released
+  {
+    maxSpeedMotor = constrain(maxSpeedMotor + 10, 150, 255);
+  }
+  if (ps2x.ButtonPressed(PSB_PAD_LEFT))  //will be TRUE if button was JUST pressed OR released
+  {
+    maxSpeedMotor = constrain(maxSpeedMotor - 10, 150, 255);
+  }
+
   motor_control();
   if (ps2x.Button(PSB_TRIANGLE)) {
-      gripServo.write(135);
-    } else {
-      gripServo.write(80);
-    }
-  if (ps2x.ButtonPressed(PSB_CROSS)) {
-    if (is_flag){
-      flag.write(flag_angle);
-    } else {
-      flag.write(unflag_angle);
-    }
-  is_flag = !is_flag;
-}
+    gripServo.write(160);
+  } else {
+    gripServo.write(60);
+  }
 
   if (ps2x.Analog(PSS_LX) == 0) {
-      isCenterIn = true;
-    } else isCenterIn = false;
+    isCenterIn = true;
+  } else isCenterIn = false;
 
-    if (ps2x.Analog(PSS_LX) == 255) {
-      isCenterDe = true;
-    } else isCenterDe = false;
+  if (ps2x.Analog(PSS_LX) == 255) {
+    isCenterDe = true;
+  } else isCenterDe = false;
 
-    // Arm1 servo
-    if (ps2x.Analog(PSS_LY) == 255) {
-      isArm1In = true;
-    } else isArm1In = false;
+  // Arm1 servo
+  if (ps2x.Analog(PSS_LY) == 255) {
+    isArm1In = true;
+  } else isArm1In = false;
 
-    if (ps2x.Analog(PSS_LY) == 0) {
-      isArm1De = true;
-    } else isArm1De = false;
+  if (ps2x.Analog(PSS_LY) == 0) {
+    isArm1De = true;
+  } else isArm1De = false;
 
-    // Arm2 servo
-    if (ps2x.Analog(PSS_RY) == 255) {
-      isArm2In = true;
-    } else isArm2In = false;
+  // Arm2 servo
+  if (ps2x.Analog(PSS_RY) == 255) {
+    isArm2In = true;
+  } else isArm2In = false;
 
-    if (ps2x.Analog(PSS_RY) == 0) {
-      isArm2De = true;
-    } else isArm2De = false;
-  
+  if (ps2x.Analog(PSS_RY) == 0) {
+    isArm2De = true;
+  } else isArm2De = false;
 }
 
-void motor_control(){
+void motor_control() {
   if (isForWard && isRight)  // forward right
   {
     set_motor(maxSpeedMotor, 0);
@@ -216,18 +198,18 @@ void motor_control(){
   } else if (isForWard) {
     set_motor(maxSpeedMotor, maxSpeedMotor);
   } else if (isBackWard) {
-    set_motor(-maxSpeedMotor*3/4, -maxSpeedMotor*3/4);
+    set_motor(-maxSpeedMotor * 3 / 4, -maxSpeedMotor * 3 / 4);
   } else if (isRight) {
     set_motor(maxSpeedMotor, -maxSpeedMotor);
   } else if (isLeft) {
     set_motor(-maxSpeedMotor, maxSpeedMotor);
   } else {
-    set_motor(0,0);
+    set_motor(0, 0);
   }
 }
 
-void arm_control(){
-    if (isArm1In) arm1Servo = constrain(arm1Servo + 4, 0, 180);
+void arm_control() {
+  if (isArm1In) arm1Servo = constrain(arm1Servo + 4, 0, 180);
   if (isArm2In) arm2Servo = constrain(arm2Servo + 4, 0, 180);
   if (isArm1De) arm1Servo = constrain(arm1Servo - 4, 0, 180);
   if (isArm2De) arm2Servo = constrain(arm2Servo - 4, 0, 180);
@@ -243,21 +225,21 @@ void arm_control(){
 
 void set_motor(int speedB, int speedA) {
   speedA = -speedA;
-  if (speedA > 0){
+  if (speedA > 0) {
     speedA = constrain(speedA, 0, 255);
     digitalWrite(MOTOR_R_2, LOW);
     analogWrite(MOTOR_R_1, speedA);
-  } else{
+  } else {
     speedA = constrain(speedA, -255, -0);
     digitalWrite(MOTOR_R_2, HIGH);
-    analogWrite(MOTOR_R_1,255 + speedA);
+    analogWrite(MOTOR_R_1, 255 + speedA);
   }
   speedB = -speedB;
-  if (speedB > 0){
+  if (speedB > 0) {
     speedB = constrain(speedB, 0, 255);
     digitalWrite(MOTOR_L_1, LOW);
     analogWrite(MOTOR_L_2, speedB);
-  } else{
+  } else {
     speedB = constrain(speedB, -255, -0);
     digitalWrite(MOTOR_L_1, HIGH);
     analogWrite(MOTOR_L_2, 255 + speedB);

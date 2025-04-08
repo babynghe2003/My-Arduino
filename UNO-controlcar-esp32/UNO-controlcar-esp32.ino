@@ -159,11 +159,11 @@ void forward() {
 }
 
 void forwardLeft() {
-  setmotor(0, maxspeed);
+  setmotor(0, 210);
 }
 
 void forwardRight() {
-  setmotor(maxspeed, 0);
+  setmotor(210, 0);
 }
 
 void backward() {
@@ -212,7 +212,38 @@ void setmotor(int speedA, int speedB){
   }
 }
 
+// void setmotor(int speedLeft, int speedRight) {
+//   Serial.print(speedLeft);
+//   Serial.print(' ');
+//   Serial.println(speedRight);
+//   // uncomment line above if any side run reverse
+//   // speedLeft = -speedLeft;
+//   // speedRight = - speedRight;
 
+//   if (speedRight >= 0){
+//     digitalWrite(MOTOR_R_2, LOW);
+//     // ledcWrite(RightChannel, speedRight);
+//     analogWrite(MOTOR_R_1, speedRight);
+//   } else {
+//     digitalWrite(MOTOR_R_2, HIGH);
+//     // ledcWrite(RightChannel,255 + speedRight);
+//     analogWrite(MOTOR_R_1, 255+speedRight);
+
+//   }
+
+//   if (speedLeft >= 0){
+//     digitalWrite(MOTOR_L_1, LOW);
+//     // ledcWrite(LeftChannel, speedLeft);
+//     analogWrite(MOTOR_L_2, speedLeft);
+
+//   } else {
+//     digitalWrite(MOTOR_L_1, HIGH);
+//     // ledcWrite(LeftChannel, 255 + speedLeft);
+//     analogWrite(MOTOR_L_2, 255+speedLeft);
+
+//   } 
+
+// }
 // void setmotor(int speedA, int speedB) {
 //   speedA = -speedA;
 //   if (speedA > 0){
@@ -235,5 +266,4 @@ void setmotor(int speedA, int speedB){
 //     ledcWrite(ENBChanel, 255 + speedB);
 //   }
 // }
-
 

@@ -1,11 +1,11 @@
 
-#define MOTOR_L_1 33
-#define MOTOR_L_2 25
-#define MOTOR_R_1 26
-#define MOTOR_R_2 27
+#define MOTOR_L_1 32
+#define MOTOR_L_2 33
+#define MOTOR_R_1 25
+#define MOTOR_R_2 26
 
 
-const uint8_t SENSORS_PIN[] = {4, 16, 17, 5, 18};
+const uint8_t SENSORS_PIN[] = {4, 16, 17, 5, 19};
 
 float Kp = 13;
 float Ki = 0.0002;
@@ -19,8 +19,8 @@ int lastError = 0;
 int isRunning = 1;
 bool isNoLine = false;
 
-const uint8_t maxspeeda = 200;
-const uint8_t maxspeedb = 200;
+const uint8_t maxspeeda = 185;
+const uint8_t maxspeedb = 185;
 const uint8_t minspeeda = 10;
 const uint8_t minspeedb = 10;
 
@@ -36,10 +36,8 @@ void setup() {
   pinMode(MOTOR_R_1, OUTPUT);
   pinMode(MOTOR_R_2, OUTPUT);
 
-  digitalWrite(MOTOR_L_1, HIGH);
-  digitalWrite(MOTOR_L_2, HIGH);
-  digitalWrite(MOTOR_R_1, HIGH);
-  digitalWrite(MOTOR_R_1, HIGH);
+  digitalWrite(MOTOR_L_1, LOW);
+  digitalWrite(MOTOR_R_1, LOW);
 
   ledcSetup(ENAChanel, freq, resolution);
   ledcSetup(ENBChanel, freq, resolution);
@@ -113,7 +111,7 @@ void read_sensors() {
     if (error > 0) error = 6;
     else error = -6;
   }
-   else if (sensorArray == "11111" || sensorArray == "10101" ) {
+   else if (sensorArray == "11111" ) {
     isRunning = 0;
   }
 }

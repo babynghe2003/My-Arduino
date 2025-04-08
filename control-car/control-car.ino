@@ -205,7 +205,7 @@ void forward() {
   Serial.println(" is foward");
 
   digitalWrite(MOTOR_L_1, HIGH);
-  digitalWrite(MOTOR_L_2, LOW);
+  digitalWrite(MOTOR_L_2d, LOW);
   digitalWrite(MOTOR_R_1, HIGH);
   digitalWrite(MOTOR_R_2, LOW);
   setmotor(maxspeed, maxspeed - 7);

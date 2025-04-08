@@ -8,7 +8,7 @@ TMRh20 2014
 
 /** General Data Transfer Rate Test
  * This example demonstrates basic data transfer functionality with the
- updated library. This example will display the transfer rates acheived using
+ updated library. This example will display the transfer rates achieved using
  the slower form of high-speed transfer using blocking-writes.
  */
 
@@ -51,7 +51,7 @@ RF24 radio(RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_8MHZ);
 /****************** Linux (BBB,x86,etc) ***********************/
 
 // See http://tmrh20.github.io/RF24/pages.html for more information on usage
-// See http://iotdk.intel.com/docs/master/mraa/ for more information on MRAA
+// See https://github.com/eclipse/mraa/ for more information on MRAA
 // See https://www.kernel.org/doc/Documentation/spi/spidev for more information on SPIDEV
 
 // Setup for ARM(Linux) devices like BBB using spidev (default is "/dev/spidev1.0" )

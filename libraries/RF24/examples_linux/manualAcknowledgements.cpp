@@ -32,6 +32,8 @@ using namespace std;
 #define CSN_PIN 0
 #ifdef MRAA
     #define CE_PIN 15 // GPIO22
+#elif defined(RF24_WIRINGPI)
+    #define CE_PIN 3 // GPIO22
 #else
     #define CE_PIN 22
 #endif
@@ -39,7 +41,7 @@ using namespace std;
 RF24 radio(CE_PIN, CSN_PIN);
 /****************** Linux (BBB,x86,etc) ***********************/
 // See http://nRF24.github.io/RF24/pages.html for more information on usage
-// See http://iotdk.intel.com/docs/master/mraa/ for more information on MRAA
+// See https://github.com/eclipse/mraa/ for more information on MRAA
 // See https://www.kernel.org/doc/Documentation/spi/spidev for more information on SPIDEV
 
 // For this example, we'll be using a payload containing
@@ -179,7 +181,7 @@ void master()
                 cout << (unsigned int)payload.counter;    // print outgoing counter
                 PayloadStruct received;
                 radio.read(&received, sizeof(received));     // get incoming payload
-                cout << " Recieved " << (unsigned int)bytes; // print incoming payload size
+                cout << " Received " << (unsigned int)bytes; // print incoming payload size
                 cout << " on pipe " << (unsigned int)pipe;   // print RX pipe number
                 cout << ": " << received.message;            // print the incoming message
                 cout << (unsigned int)received.counter;      // print the incoming counter
@@ -187,7 +189,7 @@ void master()
                 payload.counter = received.counter; // save incoming counter for next outgoing counter
             }
             else {
-                cout << "Recieved no response." << endl; // no response received
+                cout << "Received no response." << endl; // no response received
             }
         }
         else {
@@ -214,7 +216,7 @@ void slave()
     time_t startTimer = time(nullptr);       // start a timer
     while (time(nullptr) - startTimer < 6) { // use 6 second timeout
         uint8_t pipe;
-        if (radio.available(&pipe)) {               // is there a payload? get the pipe number that recieved it
+        if (radio.available(&pipe)) {               // is there a payload? get the pipe number that received it
             uint8_t bytes = radio.getPayloadSize(); // get size of incoming payload
             PayloadStruct received;
             radio.read(&received, sizeof(received)); // get incoming payload

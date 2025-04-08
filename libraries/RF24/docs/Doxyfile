@@ -15,6 +15,8 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 
+PROJECT_ICON = images/favicon.ico
+
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded by
 # double-quotes, unless you are using Doxywizard) that should identify the
 # project for which the documentation is generated. This name is used in the
@@ -332,14 +334,15 @@ HTML_EXTRA_STYLESHEET  = doxygen-custom.css
 
 HTML_COLORSTYLE = TOGGLE
 
-# If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
-# page will contain the date and time when the page was generated. Setting this
-# to YES can help to show when doxygen was last run and thus if the
-# documentation is up to date.
+# If the TIMESTAMP tag is set different from NO then each generated page will contain
+# the date or date and time when the page was generated. Setting this to NO can help
+# when comparing the output of multiple runs.
+#
+# Possible values are: YES, NO, DATETIME and DATE.
+#
 # The default value is: NO.
-# This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_TIMESTAMP         = YES
+TIMESTAMP         = DATE
 
 # If the HTML_DYNAMIC_MENUS tag is set to YES then the generated HTML
 # documentation will contain a main index with vertical navigation menus that
@@ -368,24 +371,6 @@ HTML_DYNAMIC_SECTIONS  = YES
 # The default value is: YES.
 
 GENERATE_LATEX         = NO
-
-#---------------------------------------------------------------------------
-# Configuration options related to the XML output
-#---------------------------------------------------------------------------
-
-# If the GENERATE_XML tag is set to YES, doxygen will generate an XML file that
-# captures the structure of the code including all documentation.
-# The default value is: NO.
-
-GENERATE_XML           = YES
-
-# The XML_OUTPUT tag is used to specify where the XML pages will be put. If a
-# relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
-# it.
-# The default directory is: xml.
-# This tag requires that the tag GENERATE_XML is set to YES.
-
-XML_OUTPUT             = sphinx/xml
 
 #---------------------------------------------------------------------------
 # Configuration options related to the preprocessor

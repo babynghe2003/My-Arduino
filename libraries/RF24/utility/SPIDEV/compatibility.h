@@ -14,13 +14,10 @@ extern "C" {
 #endif
 
 #include <stdint.h> // for uintXX_t types
-#include <stddef.h>
-#include <time.h>
-#include <sys/time.h>
 
-void __msleep(int milisec);
+void __msleep(int millisec);
 
-void __usleep(int milisec);
+void __usleep(int microsec);
 
 void __start_timer();
 

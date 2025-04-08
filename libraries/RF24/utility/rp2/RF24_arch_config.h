@@ -28,10 +28,10 @@
 #define _SPI   SPI
 #define RF24_SPI_PTR
 
-#ifdef SERIAL_DEBUG
-    #define IF_SERIAL_DEBUG(x) ({ x; })
+#ifdef RF24_DEBUG
+    #define IF_RF24_DEBUG(x) ({ x; })
 #else
-    #define IF_SERIAL_DEBUG(x)
+    #define IF_RF24_DEBUG(x)
 #endif
 
 typedef uint16_t prog_uint16_t;
@@ -55,7 +55,7 @@ typedef uint8_t rf24_gpio_pin_t;
 #define OUTPUT                   GPIO::DIRECTION_OUT
 #define digitalWrite(pin, value) GPIO::write(pin, value)
 #define pinMode(pin, direction)  GPIO::open(pin, direction)
-#define delay(milisec)           sleep_ms(milisec)
+#define delay(millisec)          sleep_ms(millisec)
 #define delayMicroseconds(usec)  sleep_us(usec)
 #define millis()                 to_ms_since_boot(get_absolute_time())
 

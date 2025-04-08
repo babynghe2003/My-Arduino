@@ -30,6 +30,8 @@ using namespace std;
 #define CSN_PIN 0
 #ifdef MRAA
     #define CE_PIN 15 // GPIO22
+#elif defined(RF24_WIRINGPI)
+    #define CE_PIN 3 // GPIO22
 #else
     #define CE_PIN 22
 #endif
@@ -37,7 +39,7 @@ using namespace std;
 RF24 radio(CE_PIN, CSN_PIN);
 /****************** Linux (BBB,x86,etc) ***********************/
 // See http://nRF24.github.io/RF24/pages.html for more information on usage
-// See http://iotdk.intel.com/docs/master/mraa/ for more information on MRAA
+// See https://github.com/eclipse/mraa/ for more information on MRAA
 // See https://www.kernel.org/doc/Documentation/spi/spidev for more information on SPIDEV
 
 // For this example, we'll be using 6 addresses; 1 for each TX node
@@ -230,7 +232,7 @@ void slave()
     time_t startTimer = time(nullptr);       // start a timer
     while (time(nullptr) - startTimer < 6) { // use 6 second timeout
         uint8_t pipe;
-        if (radio.available(&pipe)) {                             // is there a payload? get the pipe number that recieved it
+        if (radio.available(&pipe)) {                             // is there a payload? get the pipe number that received it
             uint8_t bytes = radio.getPayloadSize();               // get the size of the payload
             radio.read(&payload, bytes);                          // fetch payload from FIFO
             cout << "Received " << (unsigned int)bytes;           // print the size of the payload

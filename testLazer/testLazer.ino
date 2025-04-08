@@ -1,42 +1,70 @@
-/* This example shows how to use continuous mode to take
-range measurements with the VL53L0X. It is based on
-vl53l0x_ContinuousRanging_Example.c from the VL53L0X API.
+ 
+#include <SoftwareSerial.h>
 
-The range readings are in units of mm. */
+#define MOTOR_L_1 7
+#define MOTOR_L_2 6
+#define MOTOR_R_1 5
+#define MOTOR_R_2 4
 
-#include <Wire.h>
-#include <VL53L0X.h>
+SoftwareSerial BTserial(10, 11); // RX | TX
+ 
+const long baudRate = 9600; 
+char c=' ';
+boolean NL = true;
+ 
 
-VL53L0X sensor;
+uint16_t maxspeed = 255;
+String message = "";
 
-void setup()
+
+void setup() 
 {
-  Serial.begin(9600);
-  Wire.begin(2,15);
 
-  sensor.setTimeout(500);
-  if (!sensor.init())
-  {
-    Serial.println("Failed to detect and initialize sensor!");
-  }
+  pinMode(MOTOR_L_1, OUTPUT);
+  pinMode(MOTOR_L_2, OUTPUT);
+  pinMode(MOTOR_R_1, OUTPUT);
+  pinMode(MOTOR_R_2, OUTPUT);
 
-  // Start continuous back-to-back mode (take readings as
-  // fast as possible).  To use continuous timed mode
-  // instead, provide a desired inter-measurement period in
-  // ms (e.g. sensor.startContinuous(100)).
-  sensor.startContinuous();
-  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(MOTOR_L_1, HIGH);
+  digitalWrite(MOTOR_L_2, HIGH);
+  digitalWrite(MOTOR_R_1, HIGH);
+  digitalWrite(MOTOR_R_2, HIGH);
+
+    Serial.begin(9600);
+    Serial.print("Sketch:   ");   Serial.println(__FILE__);
+    Serial.print("Uploaded: ");   Serial.println(__DATE__);
+    Serial.println(" ");
+ 
+    BTserial.begin(baudRate);  
+    Serial.print("BTserial started at "); Serial.println(baudRate);
+    Serial.println(" ");
 }
+ 
 void loop()
 {
-  int range = sensor.readRangeContinuousMillimeters();
-  if (range / 10 == 18 || range / 10 == 19){
-    digitalWrite(LED_BUILTIN, HIGH);
-  }else{
-    digitalWrite(LED_BUILTIN, LOW);
-  }
-  Serial.print(sensor.readRangeContinuousMillimeters());
-  if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+set_motor(255,255);
 
-  Serial.println();
+ 
+}
+void set_motor(int speedB, int speedA) {
+  // speedA = -speedA;
+  if (speedA > 0){
+    speedA = constrain(speedA, 0, maxspeed);
+    digitalWrite(MOTOR_R_2, LOW);
+    analogWrite(MOTOR_R_1, speedA);
+  } else{
+    speedA = constrain(speedA, -maxspeed, 0);
+    digitalWrite(MOTOR_R_2, HIGH);
+    analogWrite(MOTOR_R_1,255 + speedA);
+  }
+  // speedB = -speedB;
+  if (speedB > 0){
+    speedB = constrain(speedB, 0, maxspeed);
+    digitalWrite(MOTOR_L_1, LOW);
+    analogWrite(MOTOR_L_2, speedB);
+  } else{
+    speedB = constrain(speedB, -maxspeed, -0);
+    digitalWrite(MOTOR_L_1, HIGH);
+    analogWrite(MOTOR_L_2, 255 + speedB);
+  }
 }

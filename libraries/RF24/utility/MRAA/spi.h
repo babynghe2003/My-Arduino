@@ -10,11 +10,23 @@
  * Class declaration for SPI helper files
  */
 
-#include <stdio.h>
-#include "mraa.h"
-#include "mraa.hpp"
+#include <stdexcept> // std::exception, std::string
+#include <mraa.hpp>  // mraa::
 
-#include "../../RF24_config.h" // This is cyclical and should be fixed
+/** @brief The default SPI speed (in Hz) */
+#ifndef RF24_SPI_SPEED
+    #define RF24_SPI_SPEED 10000000
+#endif
+
+/** Specific exception for SPI errors */
+class SPIException : public std::runtime_error
+{
+public:
+    explicit SPIException(const std::string& msg)
+        : std::runtime_error(msg)
+    {
+    }
+};
 
 class SPI
 {
@@ -23,11 +35,11 @@ public:
 
     virtual ~SPI();
 
-    mraa::Spi* mspi;
+    mraa::Spi* mraa_spi;
 
     inline uint8_t transfer(uint8_t _data);
 
-    inline void transfernb(char* tbuf, char* rbuf, uint32_t len);
+    inline void transfernb(char* txBuf, char* rxBuf, uint32_t len);
 
     inline void transfern(char* buf, uint32_t len);
 
@@ -35,23 +47,27 @@ public:
 
     void end();
 
+    // not actually used in Linux
     void setBitOrder(uint8_t bit_order);
 
+    // not actually used in Linux
     void setDataMode(uint8_t data_mode);
 
+    // not actually used in Linux
     void setClockDivider(uint32_t spi_speed);
 
+    // not actually used in Linux
     void chipSelect(int csn_pin);
 };
 
 uint8_t SPI::transfer(uint8_t _data)
 {
-    return mspi->writeByte(_data);
+    return mraa_spi->writeByte(_data);
 }
 
-void SPI::transfernb(char* tbuf, char* rbuf, uint32_t len)
+void SPI::transfernb(char* txBuf, char* rxBuf, uint32_t len)
 {
-    mspi->transfer((uint8_t*)tbuf, (uint8_t*)rbuf, len);
+    mraa_spi->transfer((uint8_t*)txBuf, (uint8_t*)rxBuf, len);
 }
 
 void SPI::transfern(char* buf, uint32_t len)
